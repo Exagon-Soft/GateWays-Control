@@ -1,0 +1,50 @@
+{
+  "functions": {
+    "source": "functions",
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run lint"
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "hosting": {
+    "site": "gwcontrol",
+    "public": "build",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "emulators": {
+    "auth": {
+      "port": 7171
+    },
+    "functions": {
+      "port": 7070
+    },
+    "firestore": {
+      "port": 7777
+    },
+    "storage": {
+      "port": 5555
+    },
+    "ui": {
+      "enabled": true
+    },
+    "hosting": {
+      "port": 5000
+    }
+  }
+}

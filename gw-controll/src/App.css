@@ -1,0 +1,27 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Encode Sans Expanded", sans-serif;
+}
+
+.site-container {
+  background: linear-gradient(
+    108deg,
+    rgba(82, 58, 45, 1) 0%,
+    rgba(100, 27, 4, 1) 100%
+  );
+  height: 100vh;
+  overflow:auto;
+  padding-bottom: 20px;
+}
+@media screen and (max-width: 850px) {
+  .site-container {
+    height: 100vh;
+  }
+}
+
+.Hidden{
+  display: none !Important;
+}
+
