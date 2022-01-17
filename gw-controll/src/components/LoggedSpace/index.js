@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import GateWays from "../ModalGateWays";
+import Peripherals from "../ModalPeriphericals";
 import {
   ButtonsArea,
   FormBtn,
   FullContainer,
   GateWaysList,
   GateWaysListItem,
+  GateWaysListItemAddPeripheralButton,
+  GateWaysListItemBodyPicturesArea,
   GateWaysListItemBody,
+  GateWaysListItemBodyButtonsArea,
   GateWaysListItemHead,
   GateWaysListItemHeadButtonsWrapper,
   GateWaysListItemHeadDeleteButton,
@@ -22,6 +26,7 @@ import {
 import GateWay from "../../images/GateWay.svg";
 import Peripherical_Active from "../../images/Peripherical_Active.svg";
 import Peripherical_Inactive from "../../images/Peripherical_Inactive.svg";
+import { gateWayContext } from "../../Context/GatewayContext";
 
 //** Handles the onGateWay_click event **/
 function CollapseClick(sender) {
@@ -44,7 +49,30 @@ function CollapseClick(sender) {
   }
 }
 
-const LoggedArea = ({ GateWayClick, PeriphericalClick }) => {
+const LoggedArea = ({ UserUID }) => {
+  const [gateWays, setgateWays] = useState(false);
+  const [periPhericals, setperiPhericals] = useState(false);
+
+  const [gateways] = useContext(gateWayContext);
+
+  //** Fires when the close modal button is clicked */
+  const CloseModals = () => {
+    setperiPhericals(false);
+    setgateWays(false);
+  };
+
+  //** Fires when the Add/Edit GteWay Button is clicked */
+  const GateWayClick = () => {
+    setperiPhericals(false);
+    setgateWays(true);
+  };
+
+  //** Fires when the Add/Edit Peripherical Button is clicked */
+  const PeriphericalClick = () => {
+    setgateWays(false);
+    setperiPhericals(true);
+  };
+
   return (
     <>
       <FullContainer>
@@ -71,6 +99,14 @@ const LoggedArea = ({ GateWayClick, PeriphericalClick }) => {
                 </GateWaysListItemHeadButtonsWrapper>
               </GateWaysListItemHead>
               <GateWaysListItemBody className="Hidden">
+                <GateWaysListItemBodyButtonsArea>
+                  <GateWaysListItemAddPeripheralButton onClick={PeriphericalClick}>
+                    New Peripheral
+                  </GateWaysListItemAddPeripheralButton>
+                  <GateWaysListItemAddPeripheralButton onClick={PeriphericalClick}>
+                    New Picture
+                  </GateWaysListItemAddPeripheralButton>
+                </GateWaysListItemBodyButtonsArea>
                 <Peripheral onClick={PeriphericalClick}>
                   <PeripheralIcon
                     src={Peripherical_Active}
@@ -99,11 +135,20 @@ const LoggedArea = ({ GateWayClick, PeriphericalClick }) => {
                   ></PeripheralIcon>
                   <PeripheralTitle>Haier (22/03/2022)</PeripheralTitle>
                 </Peripheral>
+                <GateWaysListItemBodyPicturesArea>
+                  
+                </GateWaysListItemBodyPicturesArea>
               </GateWaysListItemBody>
             </GateWaysListItem>
           </GateWaysList>
         </ListArea>
       </FullContainer>
+      <Peripherals periPhericals={periPhericals} CloseModals={CloseModals} />
+      <GateWays
+        gateWays={gateWays}
+        CloseModals={CloseModals}
+        UserUID={UserUID}
+      />
     </>
   );
 };

@@ -95,7 +95,7 @@ export const GateWaysListItemHeadButtonsWrapper = styled.div`
   width: 20%;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: right;
   align-items: center;
 `;
 
@@ -119,7 +119,7 @@ export const GateWaysListItemHeadDeleteButton = styled.div`
   display: grid;
   justify-self: right;
   cursor: pointer;
-  z-index:200;
+  z-index: 200;
 
   &:hover {
     background-color: #f74a4a;
@@ -138,7 +138,7 @@ export const GateWaysListItemHeadEditButton = styled.div`
   display: grid;
   justify-self: right;
   cursor: pointer;
-  z-index:200;
+  z-index: 200;
 
   &:hover {
     background-color: #6df46d;
@@ -162,7 +162,82 @@ export const GateWaysListItemBody = styled.div`
   transition: all 0.3s ease-in-out;
 `;
 
-export const GateWaysListItemBodyButtonsArea = styled.div``;
+export const GateWaysListItemBodyButtonsArea = styled.div`
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-items: center;
+  justify-content: left;
+  align-items: center;
+`;
+
+export const GateWaysListItemBodyPicturesArea = styled.div`
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-items: center;
+  justify-content: left;
+  align-items: center;
+`;
+
+
+
+export const GateWaysListItemAddPeripheralButton = styled.div`
+  width: fit-content;
+  height: fit-content;
+  padding: 5px 10px;
+  margin-right: 5px;
+  background-color: blue;
+  border-radius: 5px;
+  box-shadow: 2px 3px 5px rgba(43, 38, 41, 0.9);
+  display: grid;
+  justify-self: right;
+  cursor: pointer;
+  z-index: 200;
+
+  &:hover {
+    background-color: #6df46d;
+    box-shadow: 2px 3px 5px rgba(132, 115, 125, 0.9);
+  }
+`;
+
+export const GateWaysListItemAddPictureButton = styled.div`
+  width: fit-content;
+  height: fit-content;
+  padding: 5px 10px;
+  margin-right: 5px;
+  background-color: blue;
+  border-radius: 5px;
+  box-shadow: 2px 3px 5px rgba(43, 38, 41, 0.9);
+  display: grid;
+  justify-self: right;
+  cursor: pointer;
+  z-index: 200;
+
+  &:hover {
+    background-color: #6df46d;
+    box-shadow: 2px 3px 5px rgba(132, 115, 125, 0.9);
+  }
+`;
+
+export const GateWaysListItemOpenGaleryButton = styled.div`
+  width: fit-content;
+  height: fit-content;
+  padding: 5px 10px;
+  margin-right: 5px;
+  background-color: blue;
+  border-radius: 5px;
+  box-shadow: 2px 3px 5px rgba(43, 38, 41, 0.9);
+  display: grid;
+  justify-self: right;
+  cursor: pointer;
+  z-index: 200;
+
+  &:hover {
+    background-color: #6df46d;
+    box-shadow: 2px 3px 5px rgba(132, 115, 125, 0.9);
+  }
+`;
 
 export const GateWaysListItemBodyPeripheralArea = styled.div``;
 
@@ -175,7 +250,6 @@ export const Peripheral = styled.div`
   align-items: center;
   margin: 10px;
   cursor: pointer;
- 
 
   &:hover {
     background-color: #e8a87a;
@@ -189,3 +263,11 @@ export const PeripheralIcon = styled.img`
 `;
 
 export const PeripheralTitle = styled.h3``;
+
+
+//**Complex components */
+
+export const GateWay = ({}) => {
+  return {
+  };
+};

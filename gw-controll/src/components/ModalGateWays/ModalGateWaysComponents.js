@@ -18,6 +18,16 @@ export const ContainerModal = styled.div`
   }
 `;
 
+export const GateWayPreview = styled.img`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+`
+
+export const GteWayPreviewSearcher = styled.input`
+   
+`
+
 export const ModalBack = styled.div`
   display: ${({ gateWays }) => (gateWays ? "inline" : "none")};
   height: 100vh;
