@@ -7,10 +7,12 @@ export class GateWayService {
   //**Create a new gateway under the User account */
   async createGateway(gateway) {
     try {
+      console.log("entrando en el evento del servicio");
       const response = await axios.post(
         baseAPIUrl + "/api/newGateWay",
         gateway
       );
+      console.log(response);
       return response;
     } catch (error) {
       return error;

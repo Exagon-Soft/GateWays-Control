@@ -69,3 +69,10 @@ It is recommended the use of Firebase Hokes for the backend system, instead an A
 expected for the test development. Since it is a React front Web App there is no need of consuming an API.
 Firebase are simples, faster and with a improved security.
 
+
+GateWay Operations
+
+Each user can Add, Update or delete it's own Gateways. From the main page a list will be displayed showing 
+only the GateWays under the user account.
+*******************
+Admins can and will display a list of all gateways and accessories

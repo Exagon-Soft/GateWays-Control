@@ -263,11 +263,3 @@ export const PeripheralIcon = styled.img`
 `;
 
 export const PeripheralTitle = styled.h3``;
-
-
-//**Complex components */
-
-export const GateWay = ({}) => {
-  return {
-  };
-};

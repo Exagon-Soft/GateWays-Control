@@ -12,10 +12,10 @@ import {
   ModalBack,
 } from "./ModalPeriphericalsComponents";
 
-const Peripherals = ({ periPhericals, CloseModals }) => {
+const Peripherals = ({ showperiPhericalsDialog, CloseModals }) => {
   return (
     <>
-      <ContainerModal periPhericals={periPhericals}>
+      <ContainerModal periPhericals={showperiPhericalsDialog}>
         <Icon>
           <CloseIcon onClick={CloseModals} />
         </Icon>
@@ -29,7 +29,7 @@ const Peripherals = ({ periPhericals, CloseModals }) => {
           <FormButton>Continue</FormButton>
         </Form>
       </ContainerModal>
-      <ModalBack periPhericals={periPhericals}></ModalBack>
+      <ModalBack periPhericals={showperiPhericalsDialog}></ModalBack>
     </>
   );
 };

@@ -46,9 +46,7 @@ function App() {
         {currentUser[0] === null ? (
           <NotLoggedArea />
         ) : (
-          <GatewayContextProvider>
             <LoggedArea UserUID={currentUser[0]?.uid}/>
-          </GatewayContextProvider>
         )}
       </div>
     </>

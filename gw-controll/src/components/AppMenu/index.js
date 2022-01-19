@@ -25,7 +25,7 @@ const AppMenu = ({ LoginClick, RegisterClick, currentUser }) => {
     if (currentUser) {
       getUserRol(currentUser.uid);
     }
-  });
+  }, [Rol]);
 
   //*******Get the current User access Rol */
   async function getUserRol(userUID) {
@@ -49,7 +49,7 @@ const AppMenu = ({ LoginClick, RegisterClick, currentUser }) => {
           </NavLogo>
           <NavMenuList id="menuList">
             {currentUser ? (
-              <NavAdminMenuItem Rol={Rol}>List All GateWays</NavAdminMenuItem>
+              <NavAdminMenuItem Rol={Rol}>All GateWays Listed</NavAdminMenuItem>
             ) : (
               <></>
             )}

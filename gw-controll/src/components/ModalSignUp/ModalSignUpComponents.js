@@ -26,7 +26,7 @@ export const ModalBack = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 900;
+  z-index: 940;
   background-color: #010101;
   opacity: 0.6;
 `;

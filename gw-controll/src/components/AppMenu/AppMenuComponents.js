@@ -7,6 +7,7 @@ export const AppNav = styled.nav`
   position: fixed;
   top: 0;
   width: 100%;
+  z-index: 900;
 `;
 
 export const NavWrapperContainer = styled.div`
@@ -83,7 +84,6 @@ export const NavAdminMenuItem = styled.li`
   display: ${({Rol}) => (Rol === "Admin" ? 'flex' : 'none')};
   align-items: center;
   text-align: center;
-  cursor: pointer;
   padding-right: 15px;
   text-decoration: none;
   
@@ -91,10 +91,6 @@ export const NavAdminMenuItem = styled.li`
 
   &.active {
     border-bottom: solid 2px #bd542c;
-  }
-
-  &:hover {
-    color: #bd542c;
   }
 `;
 

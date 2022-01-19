@@ -1,5 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GateWays from "../ModalGateWays";
+import {firestore} from "../../firebase-conf";
+import { doc, getDoc } from "firebase/firestore";
 import Peripherals from "../ModalPeriphericals";
 import {
   ButtonsArea,
@@ -23,10 +25,15 @@ import {
   PeripheralIcon,
   PeripheralTitle,
 } from "./LoggedSpaceComponents";
-import GateWay from "../../images/GateWay.svg";
+import GateWayIcon from "../../images/GateWay.svg";
 import Peripherical_Active from "../../images/Peripherical_Active.svg";
 import Peripherical_Inactive from "../../images/Peripherical_Inactive.svg";
 import { gateWayContext } from "../../Context/GatewayContext";
+import GateWayListItem from "./GateWayListItem";
+import { GateWayService } from "../../Services/GateWayServices";
+import DeleteGateWay from "../ModalGateWays/delete";
+
+const gateWayService = new GateWayService();
 
 //** Handles the onGateWay_click event **/
 function CollapseClick(sender) {
@@ -50,38 +57,118 @@ function CollapseClick(sender) {
 }
 
 const LoggedArea = ({ UserUID }) => {
-  const [gateWays, setgateWays] = useState(false);
-  const [periPhericals, setperiPhericals] = useState(false);
+  //**Control GateWay Dialog behavior */
+  const [showGateWayDialog, setshowGateWayDialog] = useState(false);
+  //**Control Peripheral Dialog behavior */
+  const [showperiPhericalsDialog, setshowperiPhericalsDialog] = useState(false);
+  //**Control Delete Dialog behavior */
+  const [showDeleteGateWayDialog, setshowDeleteGateWayDialog] = useState(false);
+  //**Storage the GateWays List */
+  const [gatewayList, setgatewayList] = useState([]);
+  //**Storage the GateWay Data */
+  const [gatewayDBData, setgatewayDBData] = useState(null);
+  //**Storage the Current User Rol */
+  const [Rol, setRol] = useState("User");
 
-  const [gateways] = useContext(gateWayContext);
+   //*******Get the current User access Rol */
+   async function getUserRol(userUID) {
+    const docRef = doc(firestore, `users/${userUID}`);
+    getDoc(docRef)
+      .then((userRol) => {
+        setRol(userRol.data().Rol)
+      })
+      .catch((error) => {
+        return null;
+      });
+  }
+
+  async function LoadGateWays() {
+    try {
+      var UserRol = Rol;
+      var gateWaylist;
+      if(UserRol === "Admin"){
+        gateWaylist = await gateWayService.getAllGateWays();
+      }else{
+        gateWaylist = await gateWayService.getGateWays(UserUID);
+      }
+      
+      return gateWaylist;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  useEffect(() => {
+    async function mockFunction() {
+      try {
+        const tempList = await LoadGateWays();
+        setgatewayList(tempList.data);
+      } catch (error) {
+        return error;
+      }
+    }
+    mockFunction();
+  }, [gatewayList]);
 
   //** Fires when the close modal button is clicked */
   const CloseModals = () => {
-    setperiPhericals(false);
-    setgateWays(false);
+    setshowperiPhericalsDialog(false);
+    setshowGateWayDialog(false);
+    setshowDeleteGateWayDialog(false);
   };
 
-  //** Fires when the Add/Edit GteWay Button is clicked */
-  const GateWayClick = () => {
-    setperiPhericals(false);
-    setgateWays(true);
-  };
+  //** Fires when the Add/Edit GateWay Button is clicked */
+  function GateWayClick(gatData) {
+    if (gatData !== null) {
+      setgatewayDBData(gatData);
+    } else {
+      setgatewayDBData(null);
+    }
+
+    setshowperiPhericalsDialog(false);
+    setshowGateWayDialog(true);
+  }
+
+  //** Fires when the Delete GateWay Button is clicked */
+  function DeleteGateWayClick() {
+    setshowperiPhericalsDialog(false);
+    setshowGateWayDialog(false);
+    setshowDeleteGateWayDialog(true);
+  }
 
   //** Fires when the Add/Edit Peripherical Button is clicked */
   const PeriphericalClick = () => {
-    setgateWays(false);
-    setperiPhericals(true);
+    setshowGateWayDialog(false);
+    setshowperiPhericalsDialog(true);
   };
 
   return (
     <>
       <FullContainer>
         <ButtonsArea>
-          <FormBtn onClick={GateWayClick}>Add GateWay</FormBtn>
+          <FormBtn
+            onClick={() => {
+              GateWayClick(null);
+            }}
+          >
+            Add GateWay
+          </FormBtn>
         </ButtonsArea>
         <ListArea>
           <GateWaysList className="collapsible">
-            <GateWaysListItem className="" onClick={CollapseClick}>
+            {gatewayList &&
+              gatewayList.map((gatewayElement) => (
+                <GateWayListItem
+                  key={gatewayElement.id}
+                  onClick={CollapseClick}
+                  GateWayIcon={GateWayIcon}
+                  GateWayClick={GateWayClick}
+                  DeleteGateWayClick={DeleteGateWayClick}
+                  PeriphericalClick={PeriphericalClick}
+                  gatewayElement={gatewayElement}
+                ></GateWayListItem>
+              ))}
+            {/* <GateWaysListItem onClick={CollapseClick}>
               <GateWaysListItemHead className="collapsible-header">
                 <GateWaysListItemHeadWrapper>
                   <GateWaysListItemHeadIcon src={GateWay} />
@@ -139,16 +226,25 @@ const LoggedArea = ({ UserUID }) => {
                   
                 </GateWaysListItemBodyPicturesArea>
               </GateWaysListItemBody>
-            </GateWaysListItem>
+            </GateWaysListItem> */}
           </GateWaysList>
         </ListArea>
       </FullContainer>
-      <Peripherals periPhericals={periPhericals} CloseModals={CloseModals} />
+      <Peripherals
+        showperiPhericalsDialog={showperiPhericalsDialog}
+        CloseModals={CloseModals}
+      />
       <GateWays
-        gateWays={gateWays}
+        showGateWayDialog={showGateWayDialog}
         CloseModals={CloseModals}
         UserUID={UserUID}
+        GateWayDBData={gatewayDBData}
       />
+      <DeleteGateWay
+        GateWayDBData={gatewayDBData}
+        showDeleteGateWayDialog={showDeleteGateWayDialog}
+        CloseModals={CloseModals}
+      ></DeleteGateWay>
     </>
   );
 };

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { FaTimes } from "react-icons/fa";
 
 export const ContainerModal = styled.div`
-  display: ${({ periPhericals }) => (periPhericals ? "inline" : "none")};
+  display: ${({ showperiPhericalsDialog }) => (showperiPhericalsDialog ? "inline" : "none")};
   position: fixed;
   left: 0;
   right: 0;
@@ -19,7 +19,7 @@ export const ContainerModal = styled.div`
 `;
 
 export const ModalBack = styled.div`
-  display: ${({ periPhericals }) => (periPhericals ? "inline" : "none")};
+  display: ${({ showperiPhericalsDialog }) => (showperiPhericalsDialog ? "inline" : "none")};
   height: 100vh;
   width: 100%;
   position absolute;

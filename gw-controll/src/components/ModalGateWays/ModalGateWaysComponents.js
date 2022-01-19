@@ -2,7 +2,24 @@ import styled from 'styled-components';
 import { FaTimes } from "react-icons/fa";
 
 export const ContainerModal = styled.div`
-  display: ${({ gateWays }) => (gateWays ? "inline" : "none")};
+  display: ${({ showGateWayDialog }) => (showGateWayDialog ? "inline" : "none")};
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: transparent;
+  padding: 5%;
+  height: 100vh;
+  z-index: 950;
+
+  @media screen and (max-width: 850px) {
+    
+  }
+`;
+
+export const DeleteContainerModal = styled.div`
+  display: ${({ showDeleteGateWayDialog }) => (showDeleteGateWayDialog ? "inline" : "none")};
   position: fixed;
   left: 0;
   right: 0;
@@ -29,7 +46,21 @@ export const GteWayPreviewSearcher = styled.input`
 `
 
 export const ModalBack = styled.div`
-  display: ${({ gateWays }) => (gateWays ? "inline" : "none")};
+  display: ${({ showGateWayDialog }) => (showGateWayDialog ? "inline" : "none")};
+  height: 100vh;
+  width: 100%;
+  position absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  background-color: #010101;
+  opacity: 0.6;
+`;
+
+export const DeleteModalBack = styled.div`
+  display: ${({ showDeleteGateWayDialog }) => (showDeleteGateWayDialog ? "inline" : "none")};
   height: 100vh;
   width: 100%;
   position absolute;
