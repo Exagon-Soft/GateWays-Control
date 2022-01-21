@@ -107,9 +107,7 @@ export const FormGoogleRow = styled.div`
 `;
 
 export const FormRowContainer = styled.div`
-  width: 90%;
-  margin-left: 10%;
-  margin-right: 10%;
+  width: 100%;
   display: flex;
 `;
 

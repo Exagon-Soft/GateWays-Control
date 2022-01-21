@@ -163,3 +163,15 @@ export const ButtonRightContainer = styled.div`
   width: 50%;
   justify-content: flex-end;
 `;
+
+export const ThreeButtonLeftContainer = styled.div`
+  display: flex;
+  width: 33%;
+  justify-content: flex-start;
+`;
+
+export const ThreeButtonRightContainer = styled.div`
+  display: flex;
+  width: 66%;
+  justify-content: flex-end;
+`;

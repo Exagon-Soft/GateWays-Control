@@ -14,7 +14,7 @@ import {
 
 
 
-const GateWays = ({ showGateWayDialog, CloseModals, UserUID, GateWayDBData, refreshGateways}) => {
+const GateWays = ({ showGateWayDialog, CloseModals, UserUID, GateWayDBData}) => {
   //**Initialize Components */
   const gateWayService = new GateWayService();
   toast.configure();
@@ -27,6 +27,7 @@ const GateWays = ({ showGateWayDialog, CloseModals, UserUID, GateWayDBData, refr
  
   //**Handle the Data state */
   useEffect(() => {
+    
     if (GateWayDBData !== null && showGateWayDialog) {
       gatewayData.Name = GateWayDBData.Name;
       gatewayData.IPV4 = GateWayDBData.IPV4;
@@ -35,7 +36,6 @@ const GateWays = ({ showGateWayDialog, CloseModals, UserUID, GateWayDBData, refr
     }
     document.getElementById("gateWayName").value = gatewayData.Name;
     document.getElementById("gateWayIP").value = gatewayData.IPV4;
-    console.log(gatewayData);
   }, [showGateWayDialog]);
 
   const [gatewayData, setgatewayData] = useState(initialGatewayState);
@@ -111,8 +111,12 @@ const GateWays = ({ showGateWayDialog, CloseModals, UserUID, GateWayDBData, refr
   //**Save the data to the Database */
   const saveGateWay = async () => {
     if (isValid()) {
-      await gateWayService.createGateway(gatewayData);
-      onCloseModal();
+      try {
+        await gateWayService.createGateway(gatewayData);
+        onCloseModal();
+      } catch (error) {
+        return error;
+      }
     } else {
       ShowErrors();
     }
@@ -141,10 +145,7 @@ const GateWays = ({ showGateWayDialog, CloseModals, UserUID, GateWayDBData, refr
           <FormInput
             id="gateWayName"
             placeholder="human-readable name"
-            onFocus={(sender) => {
-              sender.target.value = gatewayData.Name;
-            }}
-            onChangeCapture={(sender) => {
+            onChange={(sender) => {
               UpdateField(sender.target.value, "Name");
               if (gatewayData.UserUID === null || gatewayData.UserUID === "")
                 UpdateField(UserUID, "UserUID");

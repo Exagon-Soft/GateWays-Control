@@ -7,12 +7,12 @@ import { firebaseAuth } from "./firebase-conf";
 import NotLoggedArea from "./components/NotLoggedSpace";
 import LoggedArea from "./components/LoggedSpace";
 import ModalSignUp from "./components/ModalSignUp";
-import GatewayContextProvider from "./Context/GatewayContext";
+import SideNav from "./components/AppMenu/SideNav";
 
 function App() {
   const [signUp, setSignUp] = useState(false);
   const [signIn, setSignIn] = useState(false);
-  
+  const [isOpen, setisOpen] = useState(false);
   const currentUser = useAuthState(firebaseAuth);
 
   //** Fires when the SignIn Button is clicked */
@@ -33,6 +33,11 @@ function App() {
     setSignUp(false);
   };
 
+  //**Fires when interacts with the Sidebar/Sidebar Button */
+  const Toggle = () =>{
+    setisOpen(!isOpen);
+  }
+
   return (
     <>
       <div className={"site-container"}>
@@ -40,13 +45,21 @@ function App() {
           LoginClick={LoginClick}
           RegisterClick={RegisterClick}
           currentUser={currentUser[0]}
+          Toggle={Toggle}
         />
+        <SideNav
+          Toggle={Toggle}
+          isOpen={isOpen}
+          LoginClick={LoginClick}
+          RegisterClick={RegisterClick}
+          currentUser={currentUser[0]}
+        ></SideNav>
         <ModalSignIn signIn={signIn} CloseModals={CloseModals} />
         <ModalSignUp signUp={signUp} CloseModals={CloseModals} />
         {currentUser[0] === null ? (
           <NotLoggedArea />
         ) : (
-            <LoggedArea UserUID={currentUser[0]?.uid}/>
+          <LoggedArea UserUID={currentUser[0]?.uid} />
         )}
       </div>
     </>

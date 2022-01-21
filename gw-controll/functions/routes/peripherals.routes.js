@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const cors = require("cors");
-const peripheralRouter = Router();
-peripheralRouter.use(cors({ origin: true }));
+const router = Router();
+router.use(cors({ origin: true }));
 
 const admin = require("firebase-admin");
 const firestoreDB = admin.firestore();
@@ -23,17 +23,18 @@ function RandomNumericID() {
 }
 
 //* Add a Peripheral for the specific GateWay  */
-peripheralRouter.post("/api/newPeripheral/:gateway_id", async (req, res) => {
+router.post("/api/newPeripheral/:gateway_id", async (req, res) => {
     try {
       const docRef = await firestoreDB
-        .collection("gateways/" + req.params.gateway_id)
+        .collection("gateways")
+        .doc(req.params.gateway_id)
+        .collection("Peripherals")
         .doc(RandomNumericID())
         .create({
           Vendor: req.body.Vendor,
-          CreateDate: admin.firestore.FieldValue.serverTimestamp(),
+          CreateAt: new Date(),
           Status: req.body.Status,
         });
-  
       return res.status(200).json(docRef.writeTime);
     } catch (error) {
       return res.status(500).json(error);
@@ -41,18 +42,20 @@ peripheralRouter.post("/api/newPeripheral/:gateway_id", async (req, res) => {
   });
 
 //* Gets an specific Peripheral for the given GateWay  */
-peripheralRouter.get("/api/getperipheral/:parameters", async (req, res) => {
+router.get("/api/getperipheral/:parameters", async (req, res) => {
   try {
     const separator = "-";
     const gateway_id = req.params.parameters.split(separator)[0];
     const peripheral_id = req.params.parameters.split(separator)[1];
     const doc = await firestoreDB
-      .collection("gateways/" + gateway_id)
+      .collection("gateways")
+      .doc(gateway_id)
+      .collection("Peripherals")
       .doc(peripheral_id)
       .get();
     const response = {
       Vendor: doc.data().Vendor,
-      CreateDate: doc.data().CreateDate,
+      CreateAt: doc.data().CreateAt,
       Status: doc.data().Status,
     };
     return res.status(200).json(response);
@@ -62,29 +65,37 @@ peripheralRouter.get("/api/getperipheral/:parameters", async (req, res) => {
 });
 
 //* Gets a list of Peripheral for the given user  */
-peripheralRouter.get("/api/getperipherals/:gateway_ID", async (req, res) => {
-    try {
-      const peripheralsQuery = await firestoreDB.collection("gateways/" + req.params.gateway_ID).get();
-      const response = peripheralsQuery.docs.map(peri => ({
+router.get("/api/getperipherals/:gateway_ID", async (req, res) => {
+  try {
+    const peripheralsQuery = await firestoreDB
+      .collection("gateways")
+      .doc(req.params.gateway_ID)
+      .collection("Peripherals")
+      .get();
+    if (peripheralsQuery.docs.length > 0) {
+      const response = peripheralsQuery.docs.map((peri) => ({
         ID: peri.id,
         Vendor: peri.data().Vendor,
-        CreateDate: peri.data().CreateDate,
+        CreateAt: peri.data().CreateAt,
         Status: peri.data().Status,
       }));
       return res.status(200).json(response);
-    } catch (error) {
-      return res.status(500).json(error);
     }
-  });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
 
 //* Updates an specific Peripheral for the given user  */
-peripheralRouter.put("/api/updateperipheral/:parameters", async (req, res) => {
+router.put("/api/updateperipheral/:parameters", async (req, res) => {
     try {
         const separator = "-";
     const gateway_id = req.params.parameters.split(separator)[0];
     const peripheral_id = req.params.parameters.split(separator)[1];
       const doc = firestoreDB
-        .collection("gateways/" + gateway_id)
+        .collection("gateways")
+        .doc(gateway_id)
+        .collection("Peripherals")
         .doc(peripheral_id);
       await doc.update({
         Vendor: req.body.Vendor,
@@ -98,7 +109,7 @@ peripheralRouter.put("/api/updateperipheral/:parameters", async (req, res) => {
   });
 
 //* Delete an specific Peripheral for the given GateWay  */
-peripheralRouter.delete(
+router.delete(
   "/api/deleteperipheral/:parameters",
   async (req, res) => {
     try {
@@ -106,7 +117,9 @@ peripheralRouter.delete(
       const gateway_id = req.params.parameters.split(separator)[0];
       const peripheral_id = req.params.parameters.split(separator)[1];
       const doc = firestoreDB
-        .collection("gateways/" + gateway_id)
+        .collection("gateways")
+        .doc(gateway_id)
+        .collection("Peripherals")
         .doc(peripheral_id);
       await doc.delete();
 
@@ -117,4 +130,4 @@ peripheralRouter.delete(
   }
 );
 
-module.exports = peripheralRouter;
+module.exports = router;

@@ -4,10 +4,11 @@
  Design Madded using React-styled plugin 
  Front End handled with react and react-hokes 
  Back End managed with firebase and API REST Functions
+ Fully Responsive, Movil friendly
 
  INSTALLATION
 
- 1- Merge this repo or download code
+ 1- Clone this repo or download code
  2- Go to gw-controll folder
  3- Run "NPM install" within a terminal
  
