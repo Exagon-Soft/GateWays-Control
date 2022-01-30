@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { Carousel } from "react-responsive-carousel";
+import {Link as LinkR} from "react-router-dom";
 
 export const FullContainer = styled.div`
   display: flex;
@@ -106,7 +108,12 @@ export const GateWaysListItemHeadIcon = styled.img`
   margin-right: 5px;
 `;
 
-export const GateWaysListItemHeadText = styled.h2``;
+export const GateWaysListItemHeadText = styled.h2`
+  @media screen and (max-width: 850px) {
+    font-size: small !important;
+    font-weight: bold;
+  }
+`;
 
 export const GateWaysListItemHeadDeleteButton = styled.div`
   width: fit-content;
@@ -171,16 +178,28 @@ export const GateWaysListItemBodyButtonsArea = styled.div`
   align-items: center;
 `;
 
+export const FormLineDivider = styled.div`
+  width: 100%;
+  display: flex;
+  align-self: center;
+  margin-left: 3px;
+  margin-right: 3px;
+  border-bottom: solid 2px #fff;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  overflow: clip;
+`;
+
 export const GateWaysListItemBodyPicturesArea = styled.div`
   width: 100%;
-  height: 60px;
+  height: 120px;
   display: flex;
   justify-items: center;
   justify-content: left;
   align-items: center;
+  padding-top: 20px;
+  padding-bottom: 10px;
 `;
-
-
 
 export const GateWaysListItemAddPeripheralButton = styled.div`
   width: fit-content;
@@ -263,3 +282,46 @@ export const PeripheralIcon = styled.img`
 `;
 
 export const PeripheralTitle = styled.h3``;
+
+export const CarouselItem = styled.div``;
+
+export const CarrouselImageLink = styled.a`
+   className: card-img-top;
+   display: flex;
+   overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+`
+
+export const CarouselImgTop = styled.img`
+  className: card-img-top;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  margin: 10px;
+  border: solid 1px white;
+  border-radius: 20%;
+  overflow: scroll;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+
+  &:hover{
+    height: 130px
+  }   
+`;
+
+export const CarouselCard = styled.div`
+  className: card;
+`;
+
+export const CarouselCardBody = styled.div`
+  className: card-body;
+`;
+
+export const CarouselCardTitle = styled.h5`
+  className: card-title;
+`;
+
+export const CarouselCardText = styled.p`
+  className: card-text;
+`;

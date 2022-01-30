@@ -45,11 +45,11 @@ const AppMenu = ({ LoginClick, RegisterClick, currentUser, Toggle }) => {
     <>
       <AppNav>
         <NavWrapperContainer>
-          <NavLogo to="#">
+          <NavLogo>
             <NavLogoPicture src={Icon} alt="GW-CONTROL" />
             GW-CONTROL
           </NavLogo>
-          <NavbarTogle onClick={Toggle}>
+          <NavbarTogle id="SideBarBTN" onClick={Toggle}>
             <FaBars></FaBars>
           </NavbarTogle>
           <NavMenuList id="menuList">

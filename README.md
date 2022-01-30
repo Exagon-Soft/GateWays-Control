@@ -77,3 +77,8 @@ Each user can Add, Update or delete it's own Gateways. From the main page a list
 only the GateWays under the user account.
 *******************
 Admins can and will display a list of all gateways and accessories
+
+
+Pictures Handle
+
+Users can upload images for a specific GateWay, as well as download the files via firebase storage. 

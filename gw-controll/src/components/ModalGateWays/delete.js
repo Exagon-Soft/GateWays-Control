@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { GateWayService } from "../../Services/GateWayServices";
 import { ButtonLeftContainer, ButtonRightContainer } from '../Utils/miscElements';
 import {
@@ -13,12 +13,24 @@ import {
     Icon,
   } from "./ModalGateWaysComponents";
 
-const DeleteGateWay = ({GateWayDBData,showDeleteGateWayDialog, CloseModals}) => {
+const DeleteGateWay = ({GateWayDBData, showDeleteGateWayDialog, CloseModals}) => {
   //**Initialize Components */
   const gateWayService = new GateWayService();
+  const [gateWayID, setGateWayID] = useState("");
+
+  //**Handle the Data state */
+  useEffect(() => {
+    try {
+      setGateWayID(GateWayDBData.ID)
+      console.log(GateWayDBData.ID, gateWayID)
+    } catch (error) {
+      return(error);
+    }
+  }, [showDeleteGateWayDialog]);
+
   async function onDeleteGateWay() {
-      await gateWayService.deleteGateWay(GateWayDBData.ID);
-      CloseModals();
+    await gateWayService.deleteGateWay(gateWayID);
+    CloseModals();
   }
 
   return (

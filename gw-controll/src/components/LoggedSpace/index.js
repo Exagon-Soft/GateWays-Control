@@ -42,9 +42,9 @@ function CollapseClick(sender) {
 const LoggedArea = ({ UserUID }) => {
   //**Control GateWay Dialog behavior */
   const [showGateWayDialog, setshowGateWayDialog] = useState(false);
-  
   //**Control Delete Dialog behavior */
   const [showDeleteGateWayDialog, setshowDeleteGateWayDialog] = useState(false);
+  
   //**Storage the GateWays List */
   const [gatewayList, setgatewayList] = useState([]);
   //**Storage the GateWay Data */
@@ -53,8 +53,8 @@ const LoggedArea = ({ UserUID }) => {
   const [Rol, setRol] = useState("User");
 
    //*******Get the current User access Rol */
-   async function getUserRol(userUID) {
-    const docRef = doc(firestore, `users/${userUID}`);
+   async function getUserRol() {
+    const docRef = doc(firestore, `users/${UserUID}`);
     getDoc(docRef)
       .then((userRol) => {
         setRol(userRol.data().Rol)
@@ -66,6 +66,7 @@ const LoggedArea = ({ UserUID }) => {
 
   async function LoadGateWays() {
     try {
+      getUserRol();
       var UserRol = Rol;
       var gateWaylist;
       if(UserRol === "Admin"){
@@ -80,11 +81,15 @@ const LoggedArea = ({ UserUID }) => {
     }
   }
 
+  async function LoadGateWaysList(){
+    const tempList = await LoadGateWays();
+    setgatewayList(tempList.data);
+  }
+
   useEffect(() => {
     async function mockFunction() {
       try {
-        const tempList = await LoadGateWays();
-        setgatewayList(tempList.data);
+        await LoadGateWaysList();
       } catch (error) {
         return error;
       }
@@ -93,7 +98,11 @@ const LoggedArea = ({ UserUID }) => {
   }, [gatewayList]);
 
   //** Fires when the close modal button is clicked */
-  const CloseModals = () => {
+  const CloseModals = (needLoad) => {
+    console.log(needLoad);
+    if(needLoad){
+      LoadGateWaysList();
+    }
     setshowGateWayDialog(false);
     setshowDeleteGateWayDialog(false);
   };
@@ -110,7 +119,12 @@ const LoggedArea = ({ UserUID }) => {
   }
 
   //** Fires when the Delete GateWay Button is clicked */
-  function DeleteGateWayClick() {
+  function DeleteGateWayClick(gatData) {
+    if (gatData !== null) {
+      setgatewayDBData(gatData);
+    } else {
+      setgatewayDBData(null);
+    }
     setshowGateWayDialog(false);
     setshowDeleteGateWayDialog(true);
   }
@@ -132,21 +146,19 @@ const LoggedArea = ({ UserUID }) => {
         <ListArea>
           <GateWaysList className="collapsible">
             {gatewayList &&
-              gatewayList.map((gatewayElement) => (
+              gatewayList.map((gatewayElement, index) => (
                 <GateWayListItem
                   key={gatewayElement.id}
                   onClick={CollapseClick}
                   GateWayIcon={GateWayIcon}
                   GateWayClick={GateWayClick}
                   DeleteGateWayClick={DeleteGateWayClick}
-                  
                   gatewayElement={gatewayElement}
                 ></GateWayListItem>
               ))}
           </GateWaysList>
         </ListArea>
       </FullContainer>
-      
       <GateWays
         showGateWayDialog={showGateWayDialog}
         CloseModals={CloseModals}

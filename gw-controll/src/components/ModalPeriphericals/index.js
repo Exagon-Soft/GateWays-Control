@@ -44,12 +44,12 @@ const Peripherals = ({ showperiPhericalsDialog, CloseModals, gateway_id, periphe
     });
   };
 
-  function onCloseModal() {
+  function onCloseModal(needRefresh) {
     if (peripheralData.Vendor !== "") {
       setperipheralData(initialPeripheralState);
     }
 
-    CloseModals();
+    CloseModals(needRefresh);
   }
 
   //**Save the data to the Database */
@@ -57,7 +57,7 @@ const Peripherals = ({ showperiPhericalsDialog, CloseModals, gateway_id, periphe
     try {
       if (isValid) {
         await peripheralService.createPeripheral(gateway_id, peripheralData);
-        onCloseModal();
+        onCloseModal(true);
       }
     } catch (error) {
       return error;
@@ -69,7 +69,7 @@ const Peripherals = ({ showperiPhericalsDialog, CloseModals, gateway_id, periphe
     try {
       if (isValid) {
         await peripheralService.updatePeripheral(gateway_id, peripheralItemData.ID, peripheralData);
-        onCloseModal();
+        onCloseModal(true);
       }
     } catch (error) {
       return error;
@@ -83,7 +83,7 @@ const Peripherals = ({ showperiPhericalsDialog, CloseModals, gateway_id, periphe
          gateway_id,
          peripheralItemData.ID,
        );
-       onCloseModal();
+       onCloseModal(true);
      } catch (error) {
        return error;
      }
@@ -95,23 +95,25 @@ const Peripherals = ({ showperiPhericalsDialog, CloseModals, gateway_id, periphe
     if (peripheralItemData !== null && showperiPhericalsDialog) {
       peripheralData.Vendor = peripheralItemData.Vendor;
       peripheralData.Status = peripheralItemData.Status;
+
+      document.getElementById("peripheralVendor").value =
+        peripheralItemData.Vendor;
+      if (peripheralItemData.Status === "Active") {
+        document.getElementById("peripheralStatus").checked = true;
+      } else {
+        document.getElementById("peripheralStatus").checked = false;
+      }
     } else {
       setperipheralData(initialPeripheralState);
     }
-    document.getElementById("peripheralVendor").value = peripheralData.Vendor;
-    if(peripheralData.Status === "Active"){
-      document.getElementById("peripheralStatus").checked = true;
-    }
-    else{
-      document.getElementById("peripheralStatus").checked = false;
-    }
-  }, [showperiPhericalsDialog]);
+    
+  }, [gateway_id]);
 
   return (
     <>
       <ContainerModal showperiPhericalsDialog={showperiPhericalsDialog}>
         <Icon>
-          <CloseIcon onClick={onCloseModal} />
+          <CloseIcon onClick={() => {onCloseModal(false);}} />
         </Icon>
         <Form>
           {peripheralItemData === null ? (
@@ -139,7 +141,7 @@ const Peripherals = ({ showperiPhericalsDialog, CloseModals, gateway_id, periphe
             Online
           </FormGoogleRow>
           <FormRowContainer>
-            <FormButton onClick={onCloseModal}>Cancel</FormButton>
+            <FormButton onClick={() => {onCloseModal(false);}}>Cancel</FormButton>
             {peripheralItemData === null ? (
               <FormButton onClick={saveData}>Add</FormButton>
             ) : (

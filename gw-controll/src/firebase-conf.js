@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getPerformance } from "firebase/performance";
 import { getFunctions } from "firebase/functions";
-import { getStorage } from "firebase/storage";
+import { getStorage, ref } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -17,10 +17,11 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 
 export const firebaseAuth = getAuth(app);
 export const firestore = getFirestore(app);
 export const firebasePerform = getPerformance(app);
 export const firebaseFunct = getFunctions(app);
 export const firebaseStorage = getStorage(app);
+export const firebaseStorageRef = ref;

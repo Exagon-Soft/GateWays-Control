@@ -24,7 +24,7 @@ const PeripheralItem = ({peripheralElement, PeriphericalClick}) => {
           ></PeripheralIcon>
         )}
 
-        <PeripheralTitle>{peripheralElement.Vendor} ({moment(Date(peripheralElement.CreateAt.secunds)).format("MMM-DD-YYYY")})</PeripheralTitle>
+        <PeripheralTitle>{peripheralElement.Vendor} ({moment(Date(peripheralElement.CreateAt)).format("MMM-DD-YYYY")})</PeripheralTitle>
       </Peripheral>
     </>
   );

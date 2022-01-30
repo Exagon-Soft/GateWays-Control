@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import React, {useState, useEffect} from 'react'
 import {
     GateWaysListItem,
@@ -12,15 +13,21 @@ import {
     GateWaysListItemHeadIcon,
     GateWaysListItemHeadText,
     GateWaysListItemHeadWrapper,
+    CarouselImgTop,
+    FormLineDivider,
+    CarrouselImageLink,
 } from "./LoggedSpaceComponents";
 import PeripheralItem from './PeripheralItem';
 import Peripherals from "../ModalPeriphericals";
 import {PeripheralServices} from "../../Services/PeripheralServices"
+import ModalPicture from '../ModalPicture';
+import {firebaseStorage} from "../../firebase-conf"
+import { ref, listAll, getDownloadURL} from "firebase/storage";
 
 //** Handles the onGateWay_click event **/
 function CollapseClick(sender) {
-  console.log(sender.target.className);
-  if (sender.target.className === "sc-dtMgUX ihlPog" || sender.target.className === "sc-cZMNgc" || sender.target.className === "sc-kHOZwM gkouWf" || sender.target.className === "sc-bTfYFJ eLiHqb collapsible-header") {
+  var classPatron = "ClickableItem";
+  if (sender.target.className.includes(classPatron)) {
     var gateWayHeader = sender.target.closest(".collapsible-header");
     
     var gateWay = gateWayHeader.parentNode;
@@ -46,16 +53,27 @@ const GateWayListItem = ({ GateWayIcon, gatewayElement, GateWayClick, DeleteGate
   const peripheralService = new PeripheralServices();
   //**Control Peripheral Dialog behavior */
   const [showperiPhericalsDialog, setshowperiPhericalsDialog] = useState(false);
+  //**Control Picture Dialog behavior */
+  const [showpicturesDialog, setshowpicturesDialog] = useState(false);
+
   const [peripheralData, setperipheralData] = useState(null);
+  const [pictureURL, setpictureURL] = useState("");
 
   //** Fires when the close modal button is clicked */
-  const CloseModals = () => {
+  const CloseModals = (needRefresh) => {
+    if(needRefresh){
+      RefreshLists();
+    }
     setshowperiPhericalsDialog(false);
+    setshowpicturesDialog(false);
   };
 
   //**Storage the Peripheral List */
   const [peripheralList, setperipheralList] = useState([]);
+  //**Storage the Picture List */
+  const [picturesList, setpicturesList] = useState([]);
 
+  //**Loads the peripheral list for the GateWay */
   async function LoadPeripherals() {
     try {
       var perplist;
@@ -66,9 +84,27 @@ const GateWayListItem = ({ GateWayIcon, gatewayElement, GateWayClick, DeleteGate
     }
   }
 
+  //**Loads the picture list for the GateWay */
+  async function LoadPictures() {
+    var urlList = [];
+    try {
+      const picturesListRef = ref(firebaseStorage, gatewayElement.ID + "/");
+      const pictureList = await listAll(picturesListRef);
+
+      pictureList.items.forEach(async (itemPicture) => {
+        var tempUrl = await getDownloadURL(ref(firebaseStorage, gatewayElement.ID + "/" + itemPicture.name));
+        if(tempUrl !== "" && tempUrl !== null){
+          urlList.push(tempUrl);
+        }
+      })
+      return urlList;
+    } catch (error) {
+      return error;
+    }
+  }
+
   //** Fires when the Add/Edit Peripherical Button is clicked */
   const PeriphericalClick = (peripheral) => {
-
     if (peripheral !== null) {
       setperipheralData(peripheral);
     } else {
@@ -78,33 +114,54 @@ const GateWayListItem = ({ GateWayIcon, gatewayElement, GateWayClick, DeleteGate
     setshowperiPhericalsDialog(true);
   };
 
+  //** Fires when the Add Picture Button is clicked */
+  const OnImageClick = (ImageURL) => {
+    if (ImageURL !== "") {
+      setpictureURL(ImageURL);
+    } else {
+      setpictureURL("");
+    }
+    setshowpicturesDialog(true);
+  }
+
+  async function RefreshLists(){
+    setpicturesList([]);
+    setperipheralList([]);
+    const tempPict = await LoadPictures();
+    const tempList = await LoadPeripherals();
+    setpicturesList(tempPict);
+    setperipheralList(tempList.data);
+  }
+
   useEffect(() => {
     async function mockFunction() {
       try {
-        const tempList = await LoadPeripherals();
-        setperipheralList(tempList.data);
+        await RefreshLists();
       } catch (error) {
         return error;
       }
     }
     mockFunction();
-  }, [gatewayElement]);
+  }, []);
 
   return (
     <>
       <GateWaysListItem
-        class="GateWayItem"
+        className="GateWayItem"
         id={gatewayElement.ID}
         onClick={CollapseClick}
       >
-        <GateWaysListItemHead className="collapsible-header">
-          <GateWaysListItemHeadWrapper>
-            <GateWaysListItemHeadIcon src={GateWayIcon} />
-            <GateWaysListItemHeadText>
+        <GateWaysListItemHead className="collapsible-header ClickableItem">
+          <GateWaysListItemHeadWrapper className="ClickableItem">
+            <GateWaysListItemHeadIcon
+              src={GateWayIcon}
+              className="ClickableItem"
+            />
+            <GateWaysListItemHeadText className="ClickableItem">
               {gatewayElement.Name} ({gatewayElement.IPV4})
             </GateWaysListItemHeadText>
           </GateWaysListItemHeadWrapper>
-          <GateWaysListItemHeadButtonsWrapper>
+          <GateWaysListItemHeadButtonsWrapper className="ClickableItem">
             <GateWaysListItemHeadEditButton
               onClick={() => {
                 GateWayClick(gatewayElement);
@@ -112,7 +169,11 @@ const GateWayListItem = ({ GateWayIcon, gatewayElement, GateWayClick, DeleteGate
             >
               Edit
             </GateWaysListItemHeadEditButton>
-            <GateWaysListItemHeadDeleteButton onClick={DeleteGateWayClick}>
+            <GateWaysListItemHeadDeleteButton
+              onClick={() => {
+                DeleteGateWayClick(gatewayElement);
+              }}
+            >
               Delete
             </GateWaysListItemHeadDeleteButton>
           </GateWaysListItemHeadButtonsWrapper>
@@ -120,26 +181,47 @@ const GateWayListItem = ({ GateWayIcon, gatewayElement, GateWayClick, DeleteGate
         <GateWaysListItemBody className="Hidden">
           <GateWaysListItemBodyButtonsArea>
             {peripheralList.length < 10 ? (
-              <GateWaysListItemAddPeripheralButton onClick={() => {PeriphericalClick(null);}}>
+              <GateWaysListItemAddPeripheralButton
+                onClick={() => {
+                  PeriphericalClick(null);
+                }}
+              >
                 New Peripheral
               </GateWaysListItemAddPeripheralButton>
             ) : (
               <></>
             )}
 
-            <GateWaysListItemAddPeripheralButton onClick={PeriphericalClick}>
+            <GateWaysListItemAddPeripheralButton
+              onClick={() => {
+                OnImageClick("");
+              }}
+            >
               New Picture
             </GateWaysListItemAddPeripheralButton>
           </GateWaysListItemBodyButtonsArea>
           {peripheralList &&
-            peripheralList.map((peripheralElement) => (
+            peripheralList?.map((peripheralElement, index) => (
               <PeripheralItem
-                key={peripheralElement.ID}
+                key={peripheralElement.ID + index}
                 peripheralElement={peripheralElement}
                 PeriphericalClick={PeriphericalClick}
+                onClick={() => {PeriphericalClick(peripheralElement);}}
               ></PeripheralItem>
             ))}
-          <GateWaysListItemBodyPicturesArea></GateWaysListItemBodyPicturesArea>
+          <FormLineDivider />
+          <GateWaysListItemBodyPicturesArea>
+            {picturesList &&
+              picturesList?.map((pictureElement, index) => (
+                <CarrouselImageLink target="blank" href={pictureElement}>
+                <CarouselImgTop
+                  key={index}
+                  src={pictureElement}
+                  alt="Images"
+                ></CarouselImgTop>
+                </CarrouselImageLink>
+              ))}
+          </GateWaysListItemBodyPicturesArea>
         </GateWaysListItemBody>
       </GateWaysListItem>
       <Peripherals
@@ -148,6 +230,12 @@ const GateWayListItem = ({ GateWayIcon, gatewayElement, GateWayClick, DeleteGate
         gateway_id={gatewayElement.ID}
         peripheralItemData={peripheralData}
       />
+      <ModalPicture
+        showpicturesDialog={showpicturesDialog}
+        CloseModals={CloseModals}
+        GateWay_id={gatewayElement.ID}
+        pictureURL={pictureURL}
+      ></ModalPicture>
     </>
   );
 }

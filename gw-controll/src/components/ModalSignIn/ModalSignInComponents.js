@@ -198,7 +198,8 @@ export const Text = styled.span`
 
 export const CloseIcon = styled(FaTimes)`
   color: #fff;
-  margin: 5px 5px -3px 5px;
+  position: relative;
+  z-index: 999;
 `;
 
 export const Icon = styled.div`

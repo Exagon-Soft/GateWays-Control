@@ -62,7 +62,7 @@ const GateWays = ({ showGateWayDialog, CloseModals, UserUID, GateWayDBData}) => 
     );
   }
 
-  function onCloseModal() {
+  function onCloseModal(needRefresh) {
     if (
       gatewayData.UserUID !== "" ||
       gatewayData.Name !== "" ||
@@ -71,7 +71,7 @@ const GateWays = ({ showGateWayDialog, CloseModals, UserUID, GateWayDBData}) => 
       setgatewayData(initialGatewayState);
     }
 
-    CloseModals();
+    CloseModals(needRefresh);
   }
 
   //**Check if the data to save is valid */
@@ -113,7 +113,7 @@ const GateWays = ({ showGateWayDialog, CloseModals, UserUID, GateWayDBData}) => 
     if (isValid()) {
       try {
         await gateWayService.createGateway(gatewayData);
-        onCloseModal();
+        onCloseModal(true);
       } catch (error) {
         return error;
       }
@@ -126,7 +126,7 @@ const GateWays = ({ showGateWayDialog, CloseModals, UserUID, GateWayDBData}) => 
   const changeGateWay = async () => {
     if (isValid()) {
       await gateWayService.updateGateWay(GateWayDBData.ID, gatewayData);
-      onCloseModal();
+      onCloseModal(true);
     } else {
       ShowErrors();
     }
@@ -136,7 +136,7 @@ const GateWays = ({ showGateWayDialog, CloseModals, UserUID, GateWayDBData}) => 
     <>
       <ContainerModal showGateWayDialog={showGateWayDialog}>
         <Icon>
-          <CloseIcon onClick={onCloseModal} />
+          <CloseIcon onClick={() => {onCloseModal(false)}} />
         </Icon>
         <Form>
           <FormTitle>

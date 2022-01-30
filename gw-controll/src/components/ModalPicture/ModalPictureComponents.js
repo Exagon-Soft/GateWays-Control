@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import { FaTimes } from "react-icons/fa";
 
+
 export const ContainerModal = styled.div`
-  display: ${({ showGateWayDialog }) => (showGateWayDialog ? "inline" : "none")};
+  display: ${({ showpicturesDialog }) => (showpicturesDialog ? "inline" : "none")};
   position: fixed;
   left: 0;
   right: 0;
@@ -14,53 +15,11 @@ export const ContainerModal = styled.div`
   z-index: 950;
 
   @media screen and (max-width: 850px) {
-    
   }
 `;
-
-export const DeleteContainerModal = styled.div`
-  display: ${({ showDeleteGateWayDialog }) => (showDeleteGateWayDialog ? "inline" : "none")};
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background-color: transparent;
-  padding: 5%;
-  height: 100vh;
-  z-index: 950;
-
-  @media screen and (max-width: 850px) {
-    
-  }
-`;
-
-export const GateWayPreview = styled.img`
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-`
-
-export const GteWayPreviewSearcher = styled.input`
-   
-`
 
 export const ModalBack = styled.div`
-  display: ${({ showGateWayDialog }) => (showGateWayDialog ? "inline" : "none")};
-  height: 100vh;
-  width: 100%;
-  position absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 900;
-  background-color: #010101;
-  opacity: 0.6;
-`;
-
-export const DeleteModalBack = styled.div`
-  display: ${({ showDeleteGateWayDialog }) => (showDeleteGateWayDialog ? "inline" : "none")};
+  display: ${({ showpicturesDialog }) => (showpicturesDialog ? "inline" : "none")};
   height: 100vh;
   width: 100%;
   position absolute;
@@ -99,54 +58,6 @@ export const FormTitle = styled.h1`
   text-align: center;
 `;
 
-export const FormGoogleRow = styled.div`
-  width: 100%;
-  display: flex;
-  vertical-align: middle;
-  color: #fff;
-`;
-
-export const FormRowContainer = styled.div`
-  width: 100%;
-  display: flex;
-`;
-
-export const FormBtn = styled.div`
-  align-content: center;
-  margin-left: 10%;
-  display: flex;
-  width: 80%;
-  background: #bd542c;
-  border: none;
-  border-radius: 4px;
-  color: #fff;
-  font-size: 20px;
-  cursor: pointer;
-  box-shadow: -2px 3px 5px rgba(56, 47, 53, 0.9);
-  transition: all 0.3s ease-in-out;
-
-  &:hover {
-    background: #a4644c;
-    box-shadow: -2px 3px 5px rgba(60, 50, 56, 0.9);
-  }
-
-  &:active {
-    background: #632209;
-    box-shadow: none;
-  }
-`;
-
-export const FormEmailSelect = styled.div`
-  margin-left: 10%;
-  display: flex;
-  width: 80%;
-  border: none;
-  border-radius: 4px;
-  color: #fff;
-  font-size: 20px;
-  cursor: pointer;
-`;
-
 export const FormLabel = styled.label`
   margin-bottom: 8px;
   font-size: 14px;
@@ -158,6 +69,15 @@ export const FormInput = styled.input`
   margin-bottom: 20px;
   border: none;
   border-radius: 4px;
+`;
+
+export const FormFile = styled.input`
+  type: file;
+  padding: 8px 0px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 4px;
+  display: none;
 `;
 
 export const FormButton = styled.button`
@@ -183,6 +103,19 @@ export const FormButton = styled.button`
   }
 `;
 
+export const FormThumbnail = styled.img`
+width: 100%;
+height: 220px;
+cursor: pointer;
+border-radius: 10%;
+margin-bottom: 20px;
+border: solid 1px white;
+`
+export const FormRowContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`;
 
 export const CloseIcon = styled(FaTimes)`
   color: #fff;
@@ -201,3 +134,7 @@ export const Icon = styled.div`
   outline: none;
   z-index: 950;
 `;
+
+export const PicProgress = styled.progress`
+  max: 100;
+`
