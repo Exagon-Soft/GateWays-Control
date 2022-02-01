@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import GateWays from "../ModalGateWays";
+import React, {lazy, Suspense, useEffect, useState } from "react";
+
 import {firestore} from "../../firebase-conf";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -11,10 +11,13 @@ import {
   ListArea,
 } from "./LoggedSpaceComponents";
 import GateWayIcon from "../../images/GateWay.svg";
-
-import GateWayListItem from "./GateWayListItem";
 import { GateWayService } from "../../Services/GateWayServices";
-import DeleteGateWay from "../ModalGateWays/delete";
+
+const GateWays = lazy(() => import("../ModalGateWays"));
+const GateWayListItem = lazy(() => import("./GateWayListItem"));
+const DeleteGateWay = lazy(() => import("../ModalGateWays/delete"));
+
+const renderLoader = () => <p>Loading</p>;
 
 const gateWayService = new GateWayService();
 
@@ -66,15 +69,14 @@ const LoggedArea = ({ UserUID }) => {
 
   async function LoadGateWays() {
     try {
-      getUserRol();
-      var UserRol = Rol;
+      await getUserRol();
       var gateWaylist;
-      if(UserRol === "Admin"){
+      if(Rol === "Admin"){
         gateWaylist = await gateWayService.getAllGateWays();
       }else{
         gateWaylist = await gateWayService.getGateWays(UserUID);
       }
-      
+      console.log(gateWaylist);
       return gateWaylist;
     } catch (error) {
       return error;
@@ -82,29 +84,29 @@ const LoggedArea = ({ UserUID }) => {
   }
 
   async function LoadGateWaysList(){
+    setgatewayList([]);
     const tempList = await LoadGateWays();
     setgatewayList(tempList.data);
   }
 
   useEffect(() => {
-    async function mockFunction() {
-      try {
-        await LoadGateWaysList();
-      } catch (error) {
-        return error;
-      }
+    try {
+      LoadGateWaysList();
+      
+    } catch (error) {
+      return error;
     }
-    mockFunction();
-  }, [gatewayList]);
+  }, []);
 
   //** Fires when the close modal button is clicked */
   const CloseModals = (needLoad) => {
-    console.log(needLoad);
-    if(needLoad){
-      LoadGateWaysList();
-    }
     setshowGateWayDialog(false);
     setshowDeleteGateWayDialog(false);
+    if(needLoad){
+      LoadGateWaysList();
+      this.forceUpdate();
+    }
+    
   };
 
   //** Fires when the Add/Edit GateWay Button is clicked */
@@ -147,29 +149,35 @@ const LoggedArea = ({ UserUID }) => {
           <GateWaysList className="collapsible">
             {gatewayList &&
               gatewayList.map((gatewayElement, index) => (
-                <GateWayListItem
-                  key={gatewayElement.id}
-                  onClick={CollapseClick}
-                  GateWayIcon={GateWayIcon}
-                  GateWayClick={GateWayClick}
-                  DeleteGateWayClick={DeleteGateWayClick}
-                  gatewayElement={gatewayElement}
-                ></GateWayListItem>
+                <Suspense fallback={renderLoader()}>
+                  <GateWayListItem
+                    key={gatewayElement.id}
+                    onClick={CollapseClick}
+                    GateWayIcon={GateWayIcon}
+                    GateWayClick={GateWayClick}
+                    DeleteGateWayClick={DeleteGateWayClick}
+                    gatewayElement={gatewayElement}
+                  ></GateWayListItem>
+                </Suspense>
               ))}
           </GateWaysList>
         </ListArea>
       </FullContainer>
-      <GateWays
-        showGateWayDialog={showGateWayDialog}
-        CloseModals={CloseModals}
-        UserUID={UserUID}
-        GateWayDBData={gatewayDBData}
-      />
-      <DeleteGateWay
-        GateWayDBData={gatewayDBData}
-        showDeleteGateWayDialog={showDeleteGateWayDialog}
-        CloseModals={CloseModals}
-      ></DeleteGateWay>
+      <Suspense fallback={renderLoader()}>
+        <GateWays
+          showGateWayDialog={showGateWayDialog}
+          CloseModals={CloseModals}
+          UserUID={UserUID}
+          GateWayDBData={gatewayDBData}
+        />
+      </Suspense>
+      <Suspense fallback={renderLoader()}>
+        <DeleteGateWay
+          GateWayDBData={gatewayDBData}
+          showDeleteGateWayDialog={showDeleteGateWayDialog}
+          CloseModals={CloseModals}
+        ></DeleteGateWay>
+      </Suspense>
     </>
   );
 };

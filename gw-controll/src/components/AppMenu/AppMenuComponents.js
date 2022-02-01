@@ -44,6 +44,11 @@ export const NavLogoPicture = styled.img`
   height: 64px;
   margin-top: 8px;
   margin-right: 5px;
+
+  @media screen and (max-width: 850px) {
+    width: 32px;
+    height: 32px;
+  }
 `;
 
 export const NavbarTogle = styled.div`

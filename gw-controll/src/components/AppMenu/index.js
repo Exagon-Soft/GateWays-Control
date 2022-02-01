@@ -27,7 +27,7 @@ const AppMenu = ({ LoginClick, RegisterClick, currentUser, Toggle }) => {
     if (currentUser) {
       getUserRol(currentUser.uid);
     }
-  }, [Rol]);
+  }, []);
 
   //*******Get the current User access Rol */
   async function getUserRol(userUID) {

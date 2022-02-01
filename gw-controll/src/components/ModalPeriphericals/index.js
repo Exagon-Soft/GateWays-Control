@@ -23,6 +23,22 @@ const Peripherals = ({ showperiPhericalsDialog, CloseModals, gateway_id, periphe
   };
   const [peripheralData, setperipheralData] = useState(initialPeripheralState);
 
+  //**Handle the Data state */
+  useEffect(() => {
+    if (peripheralItemData !== null && showperiPhericalsDialog) {
+      peripheralData.Vendor = peripheralItemData.Vendor;
+      peripheralData.Status = peripheralItemData.Status;
+    } else {
+      setperipheralData(initialPeripheralState);
+    }
+    document.getElementById("peripheralVendor").value = peripheralData.Vendor;
+    if (peripheralData.Status === "Active") {
+      document.getElementById("peripheralStatus").checked = true;
+    } else {
+      document.getElementById("peripheralStatus").checked = false;
+    }
+  }, [showperiPhericalsDialog]);
+
   //**Check if the data to save is valid */
   function isValid() {
     var perVendor = peripheralData.Vendor;
@@ -89,25 +105,7 @@ const Peripherals = ({ showperiPhericalsDialog, CloseModals, gateway_id, periphe
      }
    }
 
-  //**Handle the Data state */
-  useEffect(() => {
-    
-    if (peripheralItemData !== null && showperiPhericalsDialog) {
-      peripheralData.Vendor = peripheralItemData.Vendor;
-      peripheralData.Status = peripheralItemData.Status;
-
-      document.getElementById("peripheralVendor").value =
-        peripheralItemData.Vendor;
-      if (peripheralItemData.Status === "Active") {
-        document.getElementById("peripheralStatus").checked = true;
-      } else {
-        document.getElementById("peripheralStatus").checked = false;
-      }
-    } else {
-      setperipheralData(initialPeripheralState);
-    }
-    
-  }, [gateway_id]);
+  
 
   return (
     <>

@@ -1,5 +1,8 @@
 /* eslint-disable array-callback-return */
-import React, {useState, useEffect} from 'react'
+import React, {lazy, Suspense, useState, useEffect} from 'react';
+import {firebaseStorage} from "../../firebase-conf";
+import { ref, listAll, getDownloadURL} from "firebase/storage";
+import {PeripheralServices} from "../../Services/PeripheralServices";
 import {
     GateWaysListItem,
     GateWaysListItemAddPeripheralButton,
@@ -17,37 +20,13 @@ import {
     FormLineDivider,
     CarrouselImageLink,
 } from "./LoggedSpaceComponents";
-import PeripheralItem from './PeripheralItem';
-import Peripherals from "../ModalPeriphericals";
-import {PeripheralServices} from "../../Services/PeripheralServices"
-import ModalPicture from '../ModalPicture';
-import {firebaseStorage} from "../../firebase-conf"
-import { ref, listAll, getDownloadURL} from "firebase/storage";
+const PeripheralItem = lazy(() => import('./PeripheralItem'));
+const Peripherals = lazy(() => import('../ModalPeriphericals')) ;
+const ModalPicture = lazy(() => import('../ModalPicture')) ;
+const renderLoader = () => <p>Loading</p>;
 
-//** Handles the onGateWay_click event **/
-function CollapseClick(sender) {
-  var classPatron = "ClickableItem";
-  if (sender.target.className.includes(classPatron)) {
-    var gateWayHeader = sender.target.closest(".collapsible-header");
-    
-    var gateWay = gateWayHeader.parentNode;
-    var gateWayBody = gateWay.childNodes[1];
-    var classList = gateWayBody.classList;
-    var hasClass = false;
 
-    classList.forEach((element) => {
-      if (element === "Hidden") {
-        hasClass = true;
-      }
-    });
 
-    if (hasClass) {
-      gateWayBody.classList.remove("Hidden");
-    } else {
-      gateWayBody.classList.add("Hidden");
-    }
-  }
-}
 
 const GateWayListItem = ({ GateWayIcon, gatewayElement, GateWayClick, DeleteGateWayClick}) => {
   const peripheralService = new PeripheralServices();
@@ -133,15 +112,40 @@ const GateWayListItem = ({ GateWayIcon, gatewayElement, GateWayClick, DeleteGate
     setperipheralList(tempList.data);
   }
 
-  useEffect(() => {
-    async function mockFunction() {
-      try {
-        await RefreshLists();
-      } catch (error) {
-        return error;
+  //** Handles the onGateWay_click event **/
+function CollapseClick(sender) {
+  var classPatron = "ClickableItem";
+  if (sender.target.className.includes(classPatron)) {
+    var gateWayHeader = sender.target.closest(".collapsible-header");
+    
+    var gateWay = gateWayHeader.parentNode;
+    var gateWayBody = gateWay.childNodes[1];
+    var classList = gateWayBody.classList;
+    var hasClass = false;
+
+    classList.forEach((element) => {
+      if (element === "Hidden") {
+        hasClass = true;
       }
+    });
+
+    if (hasClass) {
+      
+      gateWayBody.classList.remove("Hidden");
+      RefreshLists();
+
+    } else {
+      gateWayBody.classList.add("Hidden");
     }
-    mockFunction();
+  }
+}
+
+  useEffect(() => {
+    try {
+      //RefreshLists();
+    } catch (error) {
+      return error;
+    }
   }, []);
 
   return (
@@ -200,42 +204,50 @@ const GateWayListItem = ({ GateWayIcon, gatewayElement, GateWayClick, DeleteGate
               New Picture
             </GateWaysListItemAddPeripheralButton>
           </GateWaysListItemBodyButtonsArea>
+          <FormLineDivider />
           {peripheralList &&
             peripheralList?.map((peripheralElement, index) => (
-              <PeripheralItem
-                key={peripheralElement.ID + index}
-                peripheralElement={peripheralElement}
-                PeriphericalClick={PeriphericalClick}
-                onClick={() => {PeriphericalClick(peripheralElement);}}
-              ></PeripheralItem>
+              <Suspense fallback={renderLoader()}>
+                <PeripheralItem
+                  key={index++}
+                  peripheralElement={peripheralElement}
+                  PeriphericalClick={PeriphericalClick}
+                ></PeripheralItem>
+              </Suspense>
             ))}
           <FormLineDivider />
           <GateWaysListItemBodyPicturesArea>
             {picturesList &&
               picturesList?.map((pictureElement, index) => (
                 <CarrouselImageLink target="blank" href={pictureElement}>
-                <CarouselImgTop
-                  key={index}
-                  src={pictureElement}
-                  alt="Images"
-                ></CarouselImgTop>
+                  <Suspense fallback={renderLoader}>
+                    <CarouselImgTop
+                      key={index}
+                      src={pictureElement}
+                      alt="Images"
+                    ></CarouselImgTop>
+                  </Suspense>
                 </CarrouselImageLink>
               ))}
           </GateWaysListItemBodyPicturesArea>
         </GateWaysListItemBody>
       </GateWaysListItem>
-      <Peripherals
-        showperiPhericalsDialog={showperiPhericalsDialog}
-        CloseModals={CloseModals}
-        gateway_id={gatewayElement.ID}
-        peripheralItemData={peripheralData}
-      />
-      <ModalPicture
-        showpicturesDialog={showpicturesDialog}
-        CloseModals={CloseModals}
-        GateWay_id={gatewayElement.ID}
-        pictureURL={pictureURL}
-      ></ModalPicture>
+      <Suspense fallback={renderLoader()}>
+        <Peripherals
+          showperiPhericalsDialog={showperiPhericalsDialog}
+          CloseModals={CloseModals}
+          gateway_id={gatewayElement.ID}
+          peripheralItemData={peripheralData}
+        />
+      </Suspense>
+      <Suspense fallback={renderLoader()}>
+        <ModalPicture
+          showpicturesDialog={showpicturesDialog}
+          CloseModals={CloseModals}
+          GateWay_id={gatewayElement.ID}
+          pictureURL={pictureURL}
+        ></ModalPicture>
+      </Suspense>
     </>
   );
 }

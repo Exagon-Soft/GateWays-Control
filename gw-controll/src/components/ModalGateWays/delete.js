@@ -22,7 +22,6 @@ const DeleteGateWay = ({GateWayDBData, showDeleteGateWayDialog, CloseModals}) =>
   useEffect(() => {
     try {
       setGateWayID(GateWayDBData.ID)
-      console.log(GateWayDBData.ID, gateWayID)
     } catch (error) {
       return(error);
     }
@@ -30,7 +29,7 @@ const DeleteGateWay = ({GateWayDBData, showDeleteGateWayDialog, CloseModals}) =>
 
   async function onDeleteGateWay() {
     await gateWayService.deleteGateWay(gateWayID);
-    CloseModals();
+    CloseModals(true);
   }
 
   return (

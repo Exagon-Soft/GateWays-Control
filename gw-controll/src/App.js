@@ -1,12 +1,7 @@
-import React, { useState } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import "./App.css";
-import AppMenu from "./components/AppMenu";
-import ModalSignIn from "./components/ModalSignIn";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { firebaseAuth } from "./firebase-conf";
-import NotLoggedArea from "./components/NotLoggedSpace";
-import LoggedArea from "./components/LoggedSpace";
-import ModalSignUp from "./components/ModalSignUp";
 import SideNav from "./components/AppMenu/SideNav";
 
 function App() {
@@ -14,6 +9,14 @@ function App() {
   const [signIn, setSignIn] = useState(false);
   const [isOpen, setisOpen] = useState(false);
   const currentUser = useAuthState(firebaseAuth);
+
+  //Splitting the code
+  const ModalSignIn = lazy(() => import("./components/ModalSignIn"));
+  const ModalSignUp = lazy(() => import("./components/ModalSignUp"));
+  const LoggedArea = lazy(() => import("./components/LoggedSpace"));
+  const NotLoggedArea = lazy(() => import("./components/NotLoggedSpace"));
+  const AppMenu = lazy(() => import("./components/AppMenu"));
+  const renderLoader = () => <p>Loading</p>;
 
   //** Fires when the SignIn Button is clicked */
   const LoginClick = () => {
@@ -41,12 +44,14 @@ function App() {
   return (
     <>
       <div className={"site-container"}>
-        <AppMenu
-          LoginClick={LoginClick}
-          RegisterClick={RegisterClick}
-          currentUser={currentUser[0]}
-          Toggle={Toggle}
-        />
+        <Suspense fallback={renderLoader()}>
+          <AppMenu
+            LoginClick={LoginClick}
+            RegisterClick={RegisterClick}
+            currentUser={currentUser[0]}
+            Toggle={Toggle}
+          />
+        </Suspense>
         <SideNav
           Toggle={Toggle}
           isOpen={isOpen}
@@ -54,13 +59,19 @@ function App() {
           RegisterClick={RegisterClick}
           currentUser={currentUser[0]}
         ></SideNav>
-        <ModalSignIn signIn={signIn} CloseModals={CloseModals} />
-        <ModalSignUp signUp={signUp} CloseModals={CloseModals} />
+        <Suspense fallback={renderLoader()}>
+          <ModalSignIn signIn={signIn} CloseModals={CloseModals} />
+        </Suspense>
+        <Suspense fallback={renderLoader()}>
+          <ModalSignUp signUp={signUp} CloseModals={CloseModals} />
+        </Suspense>
+        <Suspense fallback={renderLoader()}>
         {currentUser[0] === null ? (
           <NotLoggedArea />
         ) : (
           <LoggedArea UserUID={currentUser[0]?.uid} />
         )}
+        </Suspense>
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Peripheral,
   PeripheralIcon,
@@ -9,10 +9,20 @@ import Peripherical_Inactive from "../../images/Peripherical_Inactive.svg";
 import moment from "moment";
 
 const PeripheralItem = ({peripheralElement, PeriphericalClick}) => {
+  const [peripheralItemData, setperipheralItemData] = useState(null);
+
+  useEffect(() => {
+    try {
+      setperipheralItemData(peripheralElement);
+      console.log(peripheralItemData);
+    } catch (error) {
+      return(error);
+    }
+  }, [peripheralElement])
   return (
     <>
       <Peripheral onClick={() => {PeriphericalClick(peripheralElement)}}>
-        {peripheralElement.Status === "Active" ? (
+        {peripheralItemData?.Status === "Active" ? (
           <PeripheralIcon
             src={Peripherical_Active}
             alt="Peripheral Status"
@@ -23,8 +33,8 @@ const PeripheralItem = ({peripheralElement, PeriphericalClick}) => {
             alt="Peripheral Status"
           ></PeripheralIcon>
         )}
-
-        <PeripheralTitle>{peripheralElement.Vendor} ({moment(Date(peripheralElement.CreateAt)).format("MMM-DD-YYYY")})</PeripheralTitle>
+        
+        <PeripheralTitle>{peripheralItemData?.Vendor} ({moment(Date(peripheralItemData?.CreateAt)).format("MMM-DD-YYYY")})</PeripheralTitle>
       </Peripheral>
     </>
   );

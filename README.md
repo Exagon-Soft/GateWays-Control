@@ -28,6 +28,8 @@
    Taking advantages on it's hokes.
  2-In order to manage the users access level it's been used Firebase-firestore to implement 
    a simple user Rol interface.
+ 3-To interact with the project as "Admin" use (User:gatewaycontrol pass="gatewayControl*)
+   This account it is needed to display all the GateWays information of all users.
 
 API REST
 
@@ -82,3 +84,8 @@ Admins can and will display a list of all gateways and accessories
 Pictures Handle
 
 Users can upload images for a specific GateWay, as well as download the files via firebase storage. 
+
+
+Deficiencies
+
+Steel working in the test Area to fullfil the perquisites asking in the project test solution.

@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import { Carousel } from "react-responsive-carousel";
-import {Link as LinkR} from "react-router-dom";
 
 export const FullContainer = styled.div`
   display: flex;
