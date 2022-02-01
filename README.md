@@ -40,32 +40,32 @@ if is required.
 Gateways Methods
 
 *newgateway    --"creates a new GateWay under a specific user"; takes json data  {UserUID "string",
-                  Name "string, IPV4 "string} and awaits no parameters.Returns nothing.
+                  Name "string, IPV4 "string} and awaits no parameters.Returns nothing. <br />
 *getgateway    --"Gets the data from a single GateWay"; takes no data and awaits a gateway_id string parameter.
-                  Returns {UserUID "string", Name "string", IPV4 "string"} in jason format.
+                  Returns {UserUID "string", Name "string", IPV4 "string"} in jason format.<br />
 *getgateways   --"Gets a list of GateWays for the specific user"; takes no data and awaits a user_id string
-                  parameter. Returns [{ID "string", Name "string", IPV4 "string"}] in json format.
+                  parameter. Returns [{ID "string", Name "string", IPV4 "string"}] in json format.<br />
 *deletegateway --"Delete the specific GateWay"; takes no data and a awaits a gateway_id string parameter.
-                  Return nothing.
+                  Return nothing.<br />
 *updategateway --"Updates the single GateWay data"; takes json data {Name "string", IPV4 "string"} and awaits
-                  a gateway_id string parameter. Return nothing.
+                  a gateway_id string parameter. Return nothing.<br />
 *getallgateways--"Gets a list with all the GateWays in de Data Base"; takes no data and awaits no parameter.
-                  Return [{Id "string", UserUID "string", Name "string", IPV4 "string"}] in json format.
+                  Return [{Id "string", UserUID "string", Name "string", IPV4 "string"}] in json format.<br />
 
 Peripheral Methods
 
 *newPeripheral   --"creates a new Peripheral under a specific GateWay"; takes json data  {Vendor "string",
-                    Status "string" } and awaits a gateway_id string parameters.Returns nothing.
+                    Status "string" } and awaits a gateway_id string parameters.Returns nothing.<br />
 *getperipheral   --"Gets the data from a single Peripheral"; takes no data and awaits a gateway_id + "-" +
                     peripheral_id string parameter. Return {Vendor "string", CreateDate "string", Status "string"}
-                    in json format.
+                    in json format.<br />
 *getperipherals  --"Gets a list of peripherals for the given GateWay"; takes no data and awaits a gateway_id
                     string parameter. Return [{Id "string, Vendor "string", CreateDate "string", status}] in 
-                    json format.
+                    json format.<br />
 *updateperipheral--"Updates the single peripheral data; takes json data {Vendor "string", Status "string"} and
-                    awaits a gateway_id + "-" + peripheral_id string parameter. Return Nothing.
+                    awaits a gateway_id + "-" + peripheral_id string parameter. Return Nothing.<br />
 *deleteperipheral--"Deleted the specific peripheral"; takes no data and awaits a gateway_id + "-" + 
-                    peripheral_id string parameter. Return Nothing.
+                    peripheral_id string parameter. Return Nothing.<br />
 
 ANNOTATIONS
 It is recommended the use of Firebase Hokes for the backend system, instead an API REST jason like it is 
