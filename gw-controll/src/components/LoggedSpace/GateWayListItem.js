@@ -16,36 +16,15 @@ import {
     GateWaysListItemHeadIcon,
     GateWaysListItemHeadText,
     GateWaysListItemHeadWrapper,
-    CarouselImgTop,
     FormLineDivider,
-    CarrouselImageLink,
 } from "./LoggedSpaceComponents";
+import PictureItem from './PictureItem';
 const PeripheralItem = lazy(() => import('./PeripheralItem'));
-const Peripherals = lazy(() => import('../ModalPeriphericals')) ;
-const ModalPicture = lazy(() => import('../ModalPicture')) ;
+
 const renderLoader = () => <p>Loading</p>;
 
-
-
-
-const GateWayListItem = ({ GateWayIcon, gatewayElement, GateWayClick, DeleteGateWayClick}) => {
+const GateWayListItem = ({ GateWayIcon, gatewayElement, GateWayClick, DeleteGateWayClick, onPeripheralClick, onAddPictureClick}) => {
   const peripheralService = new PeripheralServices();
-  //**Control Peripheral Dialog behavior */
-  const [showperiPhericalsDialog, setshowperiPhericalsDialog] = useState(false);
-  //**Control Picture Dialog behavior */
-  const [showpicturesDialog, setshowpicturesDialog] = useState(false);
-
-  const [peripheralData, setperipheralData] = useState(null);
-  const [pictureURL, setpictureURL] = useState("");
-
-  //** Fires when the close modal button is clicked */
-  const CloseModals = (needRefresh) => {
-    if(needRefresh){
-      RefreshLists();
-    }
-    setshowperiPhericalsDialog(false);
-    setshowpicturesDialog(false);
-  };
 
   //**Storage the Peripheral List */
   const [peripheralList, setperipheralList] = useState([]);
@@ -67,10 +46,10 @@ const GateWayListItem = ({ GateWayIcon, gatewayElement, GateWayClick, DeleteGate
   async function LoadPictures() {
     var urlList = [];
     try {
-      const picturesListRef = ref(firebaseStorage, gatewayElement.ID + "/");
+      const picturesListRef = await ref(firebaseStorage, gatewayElement.ID + "/");
       const pictureList = await listAll(picturesListRef);
 
-      pictureList.items.forEach(async (itemPicture) => {
+      await pictureList.items.forEach(async (itemPicture) => {
         var tempUrl = await getDownloadURL(ref(firebaseStorage, gatewayElement.ID + "/" + itemPicture.name));
         if(tempUrl !== "" && tempUrl !== null){
           urlList.push(tempUrl);
@@ -82,33 +61,12 @@ const GateWayListItem = ({ GateWayIcon, gatewayElement, GateWayClick, DeleteGate
     }
   }
 
-  //** Fires when the Add/Edit Peripherical Button is clicked */
-  const PeriphericalClick = (peripheral) => {
-    if (peripheral !== null) {
-      setperipheralData(peripheral);
-    } else {
-      setperipheralData(null);
-    }
-
-    setshowperiPhericalsDialog(true);
-  };
-
-  //** Fires when the Add Picture Button is clicked */
-  const OnImageClick = (ImageURL) => {
-    if (ImageURL !== "") {
-      setpictureURL(ImageURL);
-    } else {
-      setpictureURL("");
-    }
-    setshowpicturesDialog(true);
-  }
-
   async function RefreshLists(){
     setpicturesList([]);
     setperipheralList([]);
     const tempPict = await LoadPictures();
     const tempList = await LoadPeripherals();
-    setpicturesList(tempPict);
+    await setpicturesList(tempPict);
     setperipheralList(tempList.data);
   }
 
@@ -132,8 +90,7 @@ function CollapseClick(sender) {
     if (hasClass) {
       
       gateWayBody.classList.remove("Hidden");
-      RefreshLists();
-
+      //RefreshLists();
     } else {
       gateWayBody.classList.add("Hidden");
     }
@@ -142,11 +99,12 @@ function CollapseClick(sender) {
 
   useEffect(() => {
     try {
-      //RefreshLists();
+      RefreshLists();
+      //this.forceUpdate();
     } catch (error) {
       return error;
     }
-  }, []);
+  }, [gatewayElement.ID]);
 
   return (
     <>
@@ -187,7 +145,7 @@ function CollapseClick(sender) {
             {peripheralList.length < 10 ? (
               <GateWaysListItemAddPeripheralButton
                 onClick={() => {
-                  PeriphericalClick(null);
+                  onPeripheralClick(null, gatewayElement.ID);
                 }}
               >
                 New Peripheral
@@ -198,56 +156,41 @@ function CollapseClick(sender) {
 
             <GateWaysListItemAddPeripheralButton
               onClick={() => {
-                OnImageClick("");
+                onAddPictureClick("", gatewayElement.ID);
               }}
             >
               New Picture
             </GateWaysListItemAddPeripheralButton>
           </GateWaysListItemBodyButtonsArea>
           <FormLineDivider />
-          {peripheralList &&
-            peripheralList?.map((peripheralElement, index) => (
-              <Suspense fallback={renderLoader()}>
+          <Suspense fallback={renderLoader()}>
+            {peripheralList !== null ? (
+              peripheralList?.map((peripheralElement, index) => (
                 <PeripheralItem
                   key={index++}
                   peripheralElement={peripheralElement}
-                  PeriphericalClick={PeriphericalClick}
+                  PeriphericalClick={onPeripheralClick}
+                  GateWayElement={gatewayElement.ID}
                 ></PeripheralItem>
-              </Suspense>
-            ))}
+              ))
+            ) : (
+              <h1>No Pictures</h1>
+            )}
+          </Suspense>
           <FormLineDivider />
           <GateWaysListItemBodyPicturesArea>
-            {picturesList &&
-              picturesList?.map((pictureElement, index) => (
-                <CarrouselImageLink target="blank" href={pictureElement}>
-                  <Suspense fallback={renderLoader}>
-                    <CarouselImgTop
-                      key={index}
-                      src={pictureElement}
-                      alt="Images"
-                    ></CarouselImgTop>
-                  </Suspense>
-                </CarrouselImageLink>
-              ))}
+            <Suspense fallback={renderLoader()}>
+              {picturesList &&
+                picturesList?.map((pictureElement, index) => (
+                  <PictureItem
+                    key={index++}
+                    pictureElement={pictureElement}
+                  ></PictureItem>
+                ))}
+            </Suspense>
           </GateWaysListItemBodyPicturesArea>
         </GateWaysListItemBody>
       </GateWaysListItem>
-      <Suspense fallback={renderLoader()}>
-        <Peripherals
-          showperiPhericalsDialog={showperiPhericalsDialog}
-          CloseModals={CloseModals}
-          gateway_id={gatewayElement.ID}
-          peripheralItemData={peripheralData}
-        />
-      </Suspense>
-      <Suspense fallback={renderLoader()}>
-        <ModalPicture
-          showpicturesDialog={showpicturesDialog}
-          CloseModals={CloseModals}
-          GateWay_id={gatewayElement.ID}
-          pictureURL={pictureURL}
-        ></ModalPicture>
-      </Suspense>
     </>
   );
 }

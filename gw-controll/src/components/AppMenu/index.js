@@ -10,7 +10,7 @@ import {
   UserArea,
   NavbarTogle,
 } from "./AppMenuComponents";
-import Icon from "../../images/APPicon.png";
+import Icon from "../../images/APPicon.webp";
 import { firebaseAuth, firestore } from "../../firebase-conf";
 import { signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";

@@ -3,6 +3,7 @@ import "./App.css";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { firebaseAuth } from "./firebase-conf";
 import SideNav from "./components/AppMenu/SideNav";
+import LoggedArea from "./components/LoggedSpace";
 
 function App() {
   const [signUp, setSignUp] = useState(false);
@@ -13,7 +14,7 @@ function App() {
   //Splitting the code
   const ModalSignIn = lazy(() => import("./components/ModalSignIn"));
   const ModalSignUp = lazy(() => import("./components/ModalSignUp"));
-  const LoggedArea = lazy(() => import("./components/LoggedSpace"));
+  
   const NotLoggedArea = lazy(() => import("./components/NotLoggedSpace"));
   const AppMenu = lazy(() => import("./components/AppMenu"));
   const renderLoader = () => <p>Loading</p>;
@@ -65,13 +66,11 @@ function App() {
         <Suspense fallback={renderLoader()}>
           <ModalSignUp signUp={signUp} CloseModals={CloseModals} />
         </Suspense>
-        <Suspense fallback={renderLoader()}>
         {currentUser[0] === null ? (
           <NotLoggedArea />
         ) : (
           <LoggedArea UserUID={currentUser[0]?.uid} />
         )}
-        </Suspense>
       </div>
     </>
   );

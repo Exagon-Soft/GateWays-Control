@@ -8,20 +8,19 @@ import Peripherical_Active from "../../images/Peripherical_Active.svg";
 import Peripherical_Inactive from "../../images/Peripherical_Inactive.svg";
 import moment from "moment";
 
-const PeripheralItem = ({peripheralElement, PeriphericalClick}) => {
+const PeripheralItem = ({peripheralElement, PeriphericalClick, GateWayElement}) => {
   const [peripheralItemData, setperipheralItemData] = useState(null);
 
   useEffect(() => {
     try {
       setperipheralItemData(peripheralElement);
-      console.log(peripheralItemData);
     } catch (error) {
       return(error);
     }
   }, [peripheralElement])
   return (
     <>
-      <Peripheral onClick={() => {PeriphericalClick(peripheralElement)}}>
+      <Peripheral onClick={() => {PeriphericalClick(peripheralElement, GateWayElement)}}>
         {peripheralItemData?.Status === "Active" ? (
           <PeripheralIcon
             src={Peripherical_Active}

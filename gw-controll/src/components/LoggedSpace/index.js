@@ -16,6 +16,8 @@ import { GateWayService } from "../../Services/GateWayServices";
 const GateWays = lazy(() => import("../ModalGateWays"));
 const GateWayListItem = lazy(() => import("./GateWayListItem"));
 const DeleteGateWay = lazy(() => import("../ModalGateWays/delete"));
+const ModalPicture = lazy(() => import('../ModalPicture'));
+const Peripherals = lazy(() => import('../ModalPeriphericals')) ;
 
 const renderLoader = () => <p>Loading</p>;
 
@@ -47,7 +49,14 @@ const LoggedArea = ({ UserUID }) => {
   const [showGateWayDialog, setshowGateWayDialog] = useState(false);
   //**Control Delete Dialog behavior */
   const [showDeleteGateWayDialog, setshowDeleteGateWayDialog] = useState(false);
-  
+  //**Control Peripheral Dialog behavior */
+  const [showperiPhericalsDialog, setshowperiPhericalsDialog] = useState(false);
+  //**Control Picture Dialog behavior */
+  const [showpicturesDialog, setshowpicturesDialog] = useState(false);
+  const [peripheralData, setperipheralData] = useState(null);
+  const [pictureURL, setpictureURL] = useState("");
+  const [gateWayElement_ID, setgateWayElement_ID] = useState("");
+
   //**Storage the GateWays List */
   const [gatewayList, setgatewayList] = useState([]);
   //**Storage the GateWay Data */
@@ -55,12 +64,12 @@ const LoggedArea = ({ UserUID }) => {
   //**Storage the Current User Rol */
   const [Rol, setRol] = useState("User");
 
-   //*******Get the current User access Rol */
-   async function getUserRol() {
+  //*******Get the current User access Rol */
+  async function getUserRol() {
     const docRef = doc(firestore, `users/${UserUID}`);
     getDoc(docRef)
       .then((userRol) => {
-        setRol(userRol.data().Rol)
+        setRol(userRol.data().Rol);
       })
       .catch((error) => {
         return null;
@@ -71,42 +80,33 @@ const LoggedArea = ({ UserUID }) => {
     try {
       await getUserRol();
       var gateWaylist;
-      if(Rol === "Admin"){
+      if (Rol === "Admin") {
         gateWaylist = await gateWayService.getAllGateWays();
-      }else{
+      } else {
         gateWaylist = await gateWayService.getGateWays(UserUID);
       }
-      console.log(gateWaylist);
       return gateWaylist;
     } catch (error) {
       return error;
     }
   }
 
-  async function LoadGateWaysList(){
+  async function LoadGateWaysList() {
     setgatewayList([]);
     const tempList = await LoadGateWays();
     setgatewayList(tempList.data);
   }
 
-  useEffect(() => {
-    try {
-      LoadGateWaysList();
-      
-    } catch (error) {
-      return error;
-    }
-  }, []);
-
   //** Fires when the close modal button is clicked */
   const CloseModals = (needLoad) => {
     setshowGateWayDialog(false);
     setshowDeleteGateWayDialog(false);
-    if(needLoad){
+    setshowperiPhericalsDialog(false);
+    setshowpicturesDialog(false);
+    if (needLoad) {
       LoadGateWaysList();
-      this.forceUpdate();
+      GateWayListItem.forceUpdate();
     }
-    
   };
 
   //** Fires when the Add/Edit GateWay Button is clicked */
@@ -131,7 +131,37 @@ const LoggedArea = ({ UserUID }) => {
     setshowDeleteGateWayDialog(true);
   }
 
- 
+  //** Fires when the Add/Edit Peripherical Button is clicked */
+  const PeriphericalClick = (peripheral, gatewayElementID) => {
+    if (peripheral !== null) {
+      setperipheralData(peripheral);
+    } else {
+      setperipheralData(null);
+    }
+    setgateWayElement_ID(gatewayElementID);
+    setshowperiPhericalsDialog(true);
+  };
+
+  //** Fires when the Add Picture Button is clicked */
+  const OnImageClick = (ImageURL, gateWayElementID) => {
+    if (ImageURL !== "") {
+      setpictureURL(ImageURL);
+    } else {
+      setpictureURL("");
+    }
+    setgateWayElement_ID(gateWayElementID);
+    console.log(gateWayElement_ID, gateWayElementID);
+    setshowpicturesDialog(true);
+  };
+
+  
+  useEffect(() => {
+    try {
+      LoadGateWaysList();
+    } catch (error) {
+      return error;
+    }
+  }, []);
 
   return (
     <>
@@ -151,12 +181,14 @@ const LoggedArea = ({ UserUID }) => {
               gatewayList.map((gatewayElement, index) => (
                 <Suspense fallback={renderLoader()}>
                   <GateWayListItem
-                    key={gatewayElement.id}
+                    key={index++}
                     onClick={CollapseClick}
                     GateWayIcon={GateWayIcon}
                     GateWayClick={GateWayClick}
                     DeleteGateWayClick={DeleteGateWayClick}
                     gatewayElement={gatewayElement}
+                    onPeripheralClick={PeriphericalClick}
+                    onAddPictureClick={OnImageClick}
                   ></GateWayListItem>
                 </Suspense>
               ))}
@@ -177,6 +209,22 @@ const LoggedArea = ({ UserUID }) => {
           showDeleteGateWayDialog={showDeleteGateWayDialog}
           CloseModals={CloseModals}
         ></DeleteGateWay>
+      </Suspense>
+      <Suspense fallback={renderLoader()}>
+        <Peripherals
+          showperiPhericalsDialog={showperiPhericalsDialog}
+          CloseModals={CloseModals}
+          gateway_id={gateWayElement_ID}
+          peripheralItemData={peripheralData}
+        />
+      </Suspense>
+      <Suspense fallback={renderLoader()}>
+        <ModalPicture
+          showpicturesDialog={showpicturesDialog}
+          CloseModals={CloseModals}
+          GateWay_id={gateWayElement_ID}
+          pictureURL={pictureURL}
+        ></ModalPicture>
       </Suspense>
     </>
   );

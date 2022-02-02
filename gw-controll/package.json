@@ -26,7 +26,8 @@
     "react-toastify": "^8.1.0",
     "styled": "^1.0.0",
     "styled-components": "^5.3.3",
-    "web-vitals": "^2.1.2"
+    "web-vitals": "^2.1.2",
+    "webpack": "^5.68.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -57,6 +58,7 @@
     "@types/jest": "^27.4.0",
     "firebase-tools": "^10.0.1",
     "i": "^0.3.7",
-    "jest": "^27.4.7"
+    "jest": "^27.4.7",
+    "webpack-cli": "^4.9.2"
   }
 }

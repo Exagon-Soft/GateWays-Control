@@ -28,7 +28,7 @@
    Taking advantages on it's hokes.
  2-In order to manage the users access level it's been used Firebase-firestore to implement 
    a simple user Rol interface.
- 3-To interact with the project as "Admin" use (User:gatewaycontrol pass="gatewayControl*)
+ 3-To interact with the project as "Admin" use (User:gatewaycontrol@test.com pass="gatewayControl*")
    This account it is needed to display all the GateWays information of all users.
 
 API REST

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import {firebaseStorage} from "../../firebase-conf"
-import { ref, uploadBytes} from "firebase/storage";
+import React, { useEffect, useState } from "react";
+import { firebaseStorage } from "../../firebase-conf";
+import { ref, uploadBytes } from "firebase/storage";
 import { toast } from "react-toastify";
 
 import {
@@ -17,32 +17,36 @@ import {
 } from "./ModalPictureComponents.js";
 
 const ModalPicture = ({ showpicturesDialog, CloseModals, GateWay_id }) => {
-  //**Storages the uploaded %,resoult message and src prop*/
-  const [thumbnailSrc, setthumbnailSrc] = useState("");
-  const [uploadPicture, setuploadPicture] = useState(null);
+  const [thumbnailSrc, setThumbnailSrc] = useState("");
+  const [uploadPicture, setUploadPicture] = useState(null);
 
   function handleFileUploadChange(event) {
     const picture = event.target.files[0];
-    setuploadPicture(picture);
+    setUploadPicture(picture);
     var imageSRC = URL.createObjectURL(picture);
-    setthumbnailSrc(imageSRC);
+    setThumbnailSrc(imageSRC);
   }
 
   async function UploadPicture() {
     try {
-      if(uploadPicture !== null){
-        const fileRef = ref(firebaseStorage, `${GateWay_id}/${uploadPicture.name}`);
-        await (await uploadBytes(fileRef, uploadPicture));
+      if (uploadPicture !== null) {
+        const fileRef = ref(
+          firebaseStorage,
+          `${GateWay_id}/${uploadPicture.name}`
+        );
+        await uploadBytes(fileRef, uploadPicture);
         toast("Picture Uploaded");
         CloseModals(true);
-      }else{
+      } else {
         toast("Please select a picture");
       }
-
     } catch (error) {
-      return error
+      return error;
     }
   }
+
+  useEffect(() => {
+  }, [uploadPicture]);
 
   return (
     <>
@@ -58,6 +62,7 @@ const ModalPicture = ({ showpicturesDialog, CloseModals, GateWay_id }) => {
           <FormTitle>Add Picture</FormTitle>
           <FormRowContainer>
             <FormThumbnail
+              id="UploadImage"
               src={thumbnailSrc}
               onClick={() => {
                 var selector = document.getElementById("pictureSelector");
