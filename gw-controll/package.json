@@ -56,7 +56,7 @@
   "devDependencies": {
     "@firebase/testing": "^0.20.11",
     "@types/jest": "^27.4.0",
-    "firebase-tools": "^10.0.1",
+    "firebase-tools": "^11.22.0",
     "i": "^0.3.7",
     "jest": "^27.4.7",
     "webpack-cli": "^4.9.2"
